@@ -1,0 +1,471 @@
+<!doctype html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Salesforce SOQL Tool</title>
+<meta name="og:title" content="Salesforce SOQL Tool" />
+
+<meta name="description" content="A simple, in-browser JSON viewer, and CSV converter." />
+<meta name="og:description" content="A simple, in-browser JSON viewer and CSV converter." />
+
+<meta name="author" content="Eric Mill" />
+<meta name="twitter:creator" content="@konklone" />
+<meta name="twitter:url" content="https://konklone.io/json/" />
+
+<link rel="shortcut icon" href="/json/favicon.png" />
+<link rel="canonical" href="https://konklone.io/json/" />
+
+<!--
+redirect users to the https version of the website.
+but: only check when on the production domain.
+-->
+<script type="text/javascript">
+  var enforce = "konklone.io";
+  if ((enforce == window.location.host) && (window.location.protocol != "https:"))
+    window.location.protocol = "https";
+</script>
+
+<!-- jquery, jquery-csv,bootstrap -->
+<script type='text/javascript' src='assets/jquery-2.1.1.min.js'></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="assets/jquery.csv.js"></script>
+<link href="assets/bootstrap.min.css" type="text/css" rel="stylesheet" />
+
+
+<!-- site styles and JS -->
+<link href="assets/site.css" type="text/css" rel="stylesheet" />
+<link href="assets/github.css" type="text/css" rel="stylesheet" />
+<script src="assets/site.js"></script>
+<script src="assets/highlight.pack.js"></script>
+
+<style>
+th
+{border-left:1px solid black;
+border-top:1px solid black;}
+td
+{border-left:1px solid black;
+border-top:1px solid black;}
+table
+{border-right:1px solid black;
+border-bottom:1px solid black;}
+</style>
+
+<script>
+  var excerptRows = 5000;
+  var input;
+  var url;
+  var lastSaved;
+
+  function log(msg) {
+    return $(".console").removeClass("error").html(msg);
+  }
+
+  function error(msg) {
+    return log(msg).addClass("error");
+  }
+
+  function doJSON() {
+    // just in case
+    $(".drop").hide();
+
+    // get input JSON, try to parse it
+    var newInput = $(".json textarea").val();
+    if (newInput == input) return;
+
+    input = newInput;
+    if (!input) {
+      // wipe the rendered version too
+      $(".json code").html("");
+      return;
+    }
+
+    var json = jsonFrom(input);
+
+    // if succeeded, prettify and highlight it
+    // highlight shows when textarea loses focus
+    if (json) {
+      // Reset any error message from previous failed parses.
+      $("div.error").hide();
+      $("div.warning").show();
+
+      var pretty = JSON.stringify(json, undefined, 2);
+      $(".json code").html(pretty);
+      if (pretty.length < (50 * 1024))
+        hljs.highlightBlock($(".json code").get(0));
+
+      // convert to CSV, make available
+      doCSV(json);
+    } else {
+      // Show error.
+      $("div.warning").hide();
+      $("div.error").show();
+      $(".json code").html("");
+    }
+
+    return true;
+  }
+
+  // show rendered JSON
+  function showJSON(rendered) {
+    console.log("ordered to show JSON: " + rendered);
+    if (rendered) {
+      if ($(".json code").html()) {
+        console.log("there's code to show, showing...");
+        $(".json .rendered").show();
+        $(".json .editing").hide();
+      }
+    } else {
+      $(".json .rendered").hide();
+      $(".json .editing").show().focus();
+    }
+  }
+
+  function showCSV(rendered) {
+    if (rendered) {
+      if ($(".csv table").html()) {
+        $(".csv .rendered").show();
+        $(".csv .editing").hide();
+      }
+    } else {
+      $(".csv .rendered").hide();
+      $(".csv .editing").show().focus();
+    }
+  }
+
+  // takes an array of flat JSON objects, converts them to arrays
+  // renders them into a small table as an example
+  function renderCSV(objects) {
+    var rows = $.csv.fromObjects(objects, {justArrays: true});
+    if (rows.length < 1) return;
+
+    // find CSV table
+    var table = $(".csv table")[0];
+    $(table).html("");
+
+    // render header row
+    var thead = document.createElement("thead");
+    var tr = document.createElement("tr");
+    var header = rows[0];
+    for (field in header) {
+      var th = document.createElement("th");
+      $(th).html(header[field])
+      tr.appendChild(th);
+    }
+    thead.appendChild(tr);
+
+    // render body of table
+    var tbody = document.createElement("tbody");
+    for (var i=1; i<rows.length; i++) {
+      tr = document.createElement("tr");
+      for (field in rows[i]) {
+        var td = document.createElement("td");
+        $(td)
+          .html(rows[i][field])
+          .attr("title", rows[i][field]);
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+    }
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+  }
+
+  function doCSV(json) {
+    // 1) find the primary array to iterate over
+    // 2) for each item in that array, recursively flatten it into a tabular object
+    // 3) turn that tabular object into a CSV row using jquery-csv
+    var inArray = arrayFrom(json);
+
+    var outArray = [];
+    for (var row in inArray)
+        outArray[outArray.length] = parse_object(inArray[row]);
+
+    $("span.rows.count").text("" + outArray.length);
+
+    var csv = $.csv.fromObjects(outArray);
+    // excerpt and render first 10 rows
+    renderCSV(outArray.slice(0, excerptRows));
+    showCSV(true);
+
+    // show raw data if people really want it
+    $(".csv textarea").val(csv);
+
+    // download link to entire CSV as data
+    // thanks to https://jsfiddle.net/terryyounghk/KPEGU/
+    // and https://stackoverflow.com/questions/14964035/how-to-export-javascript-array-info-to-csv-on-client-side
+    var uri = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+    $(".csv a.download").attr("href", uri);
+  }
+
+  $(function() {
+
+    $(".json textarea").blur(function() {showJSON(true);});
+    $(".json pre").click(function() {showJSON(false)});
+    $(".csv textarea").blur(function() {showCSV(true);})
+    $(".csv .raw").click(function() {
+      showCSV(false);
+      $(".csv textarea").focus().select();
+      return false;
+    })
+
+    // if there's no CSV to download, don't download anything.
+    // also, log an analytics event.
+    $(".csv a.download").click(function() {
+      var data = $(".csv textarea").val();
+      if (data) {
+        Events.download(data.length);
+        return true;
+      } else
+        return false;
+    });
+
+    // transform the JSON whenever it's pasted/edited
+    $(".json textarea")
+      .on('paste', function() {
+        // delay the showing so the paste is pasted by then
+        setTimeout(function() {
+          doJSON();
+          $(".json textarea").blur();
+        }, 1);
+      })
+      .keyup(doJSON); // harmless to repeat doJSON
+
+    // go away
+    $("body").click(function() {
+      $(".drop").hide();
+    });
+
+    $(document)
+      .on("dragenter", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(".drop").show();
+      })
+      .on("dragover", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      })
+      .on("dragend", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(".drop").hide();
+      })
+      .on("drop", function(e) {
+        $(".drop").hide();
+
+        if (e.originalEvent.dataTransfer) {
+          if (e.originalEvent.dataTransfer.files.length) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var reader = new FileReader();
+
+            reader.onload = function(ev) {
+              console.log(ev.target.result);
+              $(".json textarea").val(ev.target.result);
+
+              setTimeout(function() {
+                doJSON();
+                $(".json textarea").blur();
+              }, 1);
+            }
+
+            reader.readAsText(e.originalEvent.dataTransfer.files[0]);
+          }
+        }
+      });
+
+   // highlight CSV on click
+    $(".csv textarea").click(function() {$(this).focus().select();});
+  });
+</script>
+
+</head>
+<body>
+
+<h1>Salesforce SOQL Tool</h1>
+
+<section class="json">
+  <span class="rest"></span>
+  <input type="input" name="" id="query" placeholder="Query here" style="width:50%">
+  <button id="submit">Submit</button>
+
+  <p>
+  <table style="width:80%">
+  <tr>
+    <th><div style="width: 130px"> Description </div></th>
+    <th> Query</th>
+  </tr>
+  <tr>
+    <td> 교인 찾기</td>
+    <td> SELECT+Name,ID__c,Email__c,CellPhone__c+from+ChurchMember__c+WHERE+KoreanName__c='홍길동'+OR+CellPhone__c='(408)%20xxx-xxxx'</td>
+  </tr>
+  <tr>
+    <td> 교인 정보</td>
+    <td> SELECT+Name,CellPhone__c,Email__c+from+ChurchMember__c+WHERE+KoreanName__c='홍길동'+AND+ID__c='0xxxx'</td>
+  </tr>
+  <tr>
+    <td> 사역부서 리스트</td>
+    <td> SELECT+Name+from+MinistryDepartment__c</td>
+  </tr>
+  <tr>
+    <td> 사역팀 리스트</td>
+    <td> SELECT+MinistryTeamName__c+from+MinistryTeam__c+WHERE+ParentMinistryDepartment__r.Name='사역부서이름'</td>
+  </tr>
+  <tr>
+    <td> 등록된 사역팀 리스트</td>
+    <td> SELECT+MinistryTeam__r.Name+from+ChurchMemberVolunteeringMinistryTeam__c+WHERE+VolunteerYear__c='2017'+AND+ChurchMember__r.KoreanName__c='홍길동'+AND+ChurchMember__r.ID__c='0xxxx'</td>
+  </tr>
+  <tr>
+    <td> 가정 이름 리스트</td>
+    <td> SELECT+Household__r.Name+from+ChurchMember__c+WHERE+KoreanName__c='홍길동'+OR+CellPhone__c='(xxx)%20xxx-xxxx'</td>
+  </tr>
+  <tr>
+    <td> 가정 정보</td>
+    <td> SELECT+Name,Address__c,City__c,State__c,Zipcode__c,HomePhone__c,ParticipatingHouseChurch__r.Name,HouseChurchRegionLookup__c+from+Household__c+WHERE+Name='홍길동%20가정'<br>
+    SELECT+Name,CellPhone__c,Email__c,Baptism__c+from+ChurchMember__c+WHERE+Household__r.Name='홍길동%20가정'<br>
+    SELECT+Name__c,EnglishName__c,BirthDate__c+from+Children__c+WHERE+Household__r.Name='홍길동%20가정'</td>
+  </tr>
+  <tr>
+    <td> 평원 리스트</td>
+    <td> SELECT+Name+from+HouseChurchRegion__c</td>
+  </tr>
+  <tr>
+    <td> 초원 리스트</td>
+    <td> SELECT+Name+from+HouseChurchGroup__c+WHERE+ParticipatingHouseChurchRegion__r.Name='홍길동%20평원'</td>
+  </tr>
+  <tr>
+    <td> 목장 리스트</td>
+    <td> SELECT+Name+from+HouseChurch__c+WHERE+ParticipatingHouseChurchGroup__r.Name='홍길동%20초원'</td>
+  </tr>
+  <tr>
+    <td> 목장 정보</td>
+    <td> SELECT+Name,ParticipatingHouseChurchGroup__r.Name,ParticipatingHouseChurchGroup__r.ParticipatingHouseChurchRegion__r.Name+from+HouseChurch__c+WHERE+Name='홍길동%20목장'<br>
+    SELECT+Name+from+Household__c+WHERE+ParticipatingHouseChurch__r.Name='홍길동%20목장'+ORDER+BY+Name</td>
+  </tr>
+  </table>
+  </p>
+
+  <div class="areas disappear">
+    <textarea class="editing"></textarea>
+    <pre class="rendered"><code></code></pre>
+    <div class="drop">DROP JSON HERE</div>
+  </div>
+
+  <div class="error">
+    There was an error parsing this JSON.
+  </div>
+</section>
+
+<section class="csv">
+  <p>
+    <span class="rendered">
+      Result : (<span class="rows count"></span> total).
+
+      <a download="result.csv" href="#" class="download">
+        Download the entire CSV</a>,
+
+      or <a href="#" class="raw">show the raw data</a>.
+    </span>
+
+    <span class="editing">
+      Your JSON will appear below as a table.
+    </span>
+  </p>
+
+  <div class="areas">
+    <textarea class="editing" readonly></textarea>
+    <div class="table rendered">
+      <table></table>
+    </div>
+  </div>
+  <div id="status"></div>
+</section>
+
+<script>
+  var root = 'https://na16.salesforce.com/services/data/v20.0/query?q=';
+
+  $(".rest").html("SOQL Query:");
+
+  $(document).ready(function() {
+    //Get access token.
+    //Because the access token is a URL parameter it needs to be decoded
+    var accessToken = decodeURI(GetURLParameter('access_token'));
+    console.log(accessToken);
+
+    //Use this function to get the access token from the URL
+    function GetURLParameter(sParam) {
+      var mainURL = document.location+'';
+      var pageUrls = mainURL.split('#');
+      var sURLVariables = pageUrls[1].split('&');
+      for (var i = 0; i < sURLVariables.length; i++) {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == sParam) {
+          return sParameterName[1];
+        }
+      }
+    }
+
+    $("#submit").click(function() {
+      var query = $("#query").val();
+      console.log(query);
+
+      $.ajax({
+        beforeSend: function(xhr) {
+          // Set the OAuth header from the session ID
+          xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+          xhr.setRequestHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+          xhr.setRequestHeader('Access-Control-Allow-Headers', 'Content-Type, Content-Range, Content-Disposition, Content-Description');
+        },
+        type: 'GET',
+        crossOrigin: true,
+        url : root + query,
+        headers : {
+          'Authorization' : 'Bearer '+accessToken,
+          'Content-Type' : 'application/json'
+	      },
+        success : function(response){
+          displayAccountInfo(response);
+        },
+        error: function(response){
+          displayError(response);
+        }
+      }).then(function(data) {
+        $(".editing").val(JSON.stringify(data))
+        console.log(data);
+        doJSON();
+      })
+    })
+
+    //If account is successfully created
+    function displayAccountInfo(responseObject) {
+      var statusMessage = '<p>Success!</p>';
+      $('#status').html(statusMessage);
+      $('<a>',{//replace this with your salesforce instance url
+        text: 'https://na16.salesforce.com/'+responseObject.id,
+        href: 'https://na16.salesforce.com/'+responseObject.id,
+        target : '_blank'
+      }).appendTo($('#status'));
+    }
+
+    //If an error message occurred
+    function displayError(responseObject){
+      var responseJson = responseObject.responseJSON;
+      var statusMessage = '<p>A problem has occurred!</p>';
+      $('#status').html(statusMessage);
+      $('<p>',{
+        text : responseJson[0].errorCode+": "+responseJson[0].message
+      }).appendTo($('#status'));
+      $('<a>',{//replace this with your salesforce instance url
+        text: 'Reconnect?',
+        href: 'https://jaegeuk.github.io/connect.html',
+        target : '_blank'
+      }).appendTo($('#status'));
+    }
+  })
+
+  </script>
+  </body>
+</html>
