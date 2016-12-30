@@ -492,14 +492,8 @@ border-bottom:1px solid black;}
             'Content-Type' : 'application/json'
           },
         }).then(function(data) {
-          var id = JSON.stringify(data);
-	  $.each(id.id,function(i,id) {
-	     if(id.totalSize == "1") {
-		console.log('teststset');
-               //do whatever you want with this url
-             }
-	  })
-          console.log(data);
+          console.log(data.records[0][Name]);
+          //console.log(data);
         })
  
         //convert the object to a JSON string
