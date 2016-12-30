@@ -450,7 +450,9 @@ border-bottom:1px solid black;}
           displayError(response);
         }
       }).then(function(data) {
-	delete data.records['attributes'];
+        for (var i = 0; i < data.records.length; i++) {
+          delete data.records[i]['attributes'];
+        }
         $(".editing").val(JSON.stringify(data.records))
         console.log(data);
         doJSON();
