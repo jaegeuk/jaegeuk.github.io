@@ -486,7 +486,7 @@ border-bottom:1px solid black;}
           },
           type: 'GET',
           crossOrigin: true,
-          url : root + query2 + house__c,
+          url : root + query2 + "'" + house__c + "'",
           headers : {
             'Authorization' : 'Bearer '+accessToken,
             'Content-Type' : 'application/json'
