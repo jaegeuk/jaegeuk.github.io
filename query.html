@@ -468,8 +468,10 @@ border-bottom:1px solid black;}
 
   </script>
 
-  <label for="name">기도 제목</label>
-  <input type="text" name="Name" id="name">
+  <label for="subject">기도 제목</label>
+  <input type="text" name="subject" id="name">
+  <label for="house">목장 ID</label>
+  <input type="text" name="house" id="house">
   <br><br>
   <button id="button">Submit</button>
   <div id="status"></div>
@@ -501,7 +503,7 @@ border-bottom:1px solid black;}
     $('#button').click(function(){
       var subject__c = $('#name').val();
       var date__c = '2016-12-29';
-      var name__c = 'test';
+      var house__c = $('house').val();
       var content__c = 'content';
       if(subject__c != '')
       {
@@ -512,7 +514,7 @@ border-bottom:1px solid black;}
         var reportInfo = {
           "PrayerSubject__c": subject__c,
 	  "MeetingDate__c": date__c,
-	  //"HouseChurchName__c": name__c,
+	  "HouseChurchName__c": house__c,
 	  "ReportContent__c": content__c
         }
 
