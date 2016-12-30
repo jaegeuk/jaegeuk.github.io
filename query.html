@@ -499,11 +499,11 @@ border-bottom:1px solid black;}
 
         console.log(housechurch__c);
 
-        //reportInfo["HouseChurchName__c"] = housechurch__c;
+        reportInfo['HouseChurchName__c'] = housechurch__c;
 
-	var obj = JSON.parse(reportInfo);
-	obj.push("HouseChurchName__c": housechurch__c);
-	reportInfo = JSON.stringify(obj);
+//	var obj = JSON.parse(reportInfo);
+//	obj.push({"HouseChurchName__c": housechurch__c});
+//	reportInfo = JSON.stringify(obj);
 
 	console.log(reportInfo);
 
