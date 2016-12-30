@@ -450,7 +450,10 @@ border-bottom:1px solid black;}
           displayError(response);
         }
       }).then(function(data) {
+	delete data.records['attributes'];
         $(".editing").val(JSON.stringify(data.records))
+	delete myObj.test[keyToDelete];
+
         console.log(data);
         doJSON();
       })
