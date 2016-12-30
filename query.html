@@ -494,14 +494,15 @@ border-bottom:1px solid black;}
         var reportInfo = {
           "PrayerSubject__c": subject__c,
           "MeetingDate__c": date__c,
-          "HouseChurchName__c": housechurch__c,
           "ReportContent__c": content__c
         }
+
+        reportInfo["HouseChurchName__c"] = housechurch__c;
 
 	console.log(reportInfo);
 
         //convert the object to a JSON string
-        var accountInfoJson = JSON.stringify(reportInfo);
+        var reportInfoJson = JSON.stringify(reportInfo);
         //send POST with ajax
         $.ajax({
 
@@ -520,7 +521,7 @@ border-bottom:1px solid black;}
             'Content-Type' : 'application/json'
           },
 
-          data : accountInfoJson,
+          data : reportInfoJson,
           success : function(response){
             displayAccountInfo(response);
           },
