@@ -550,27 +550,6 @@ border-bottom:1px solid black;}
         alert('Please specify subject');
       }
     })
-
-    //If account is successfully created
-    function displayAccountInfo(responseObject){
-      var statusMessage = '<p>Success! Your account has been created, click on the link below.</p>';
-      $('#status').append(statusMessage);
-      $('<a>',{//replace this with your salesforce instance url
-        text: 'https://na16.salesforce.com/'+responseObject.id,
-        href: 'https://na16.salesforce.com/'+responseObject.id,
-        target : '_blank'
-      }).appendTo($('#status'));
-    }
-
-    //If an error message occurred
-    function displayError(responseObject){
-      var responseJson = responseObject.responseJSON;
-      var statusMessage = '<p>A problem has occurred, please contact your administrator</p>';
-      $('#status').append(statusMessage);
-      $('<p>',{
-        text : responseJson[0].errorCode+": "+responseJson[0].message
-      }).appendTo($('#status'));
-    }
   })
 
   </script>
