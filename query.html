@@ -458,14 +458,13 @@ border-bottom:1px solid black;}
       })
     })
 
-    $('#insert').click(function(){
+    $('#insert').click(function() {
       var subject__c = $('#subject').val();
       var date__c = $('#date').val();
       var house__c = $('#house').val();
       var content__c = $('#report').val();
 
-      if(subject__c != '')
-      {
+      if(subject__c != '') {
         var query='SELECT+Name+from+HouseChurch__c+WHERE+Name=';
 
         $.ajax({
@@ -525,10 +524,10 @@ border-bottom:1px solid black;}
               displayError(response);
             }
           })
-        } else {
-          alert('Please specify subject');
-        }
-      })
+	})
+      } else {
+        alert('Please specify subject');
+      }
     })
 
     //If account is successfully created
