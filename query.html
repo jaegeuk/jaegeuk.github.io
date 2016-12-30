@@ -492,7 +492,9 @@ border-bottom:1px solid black;}
             'Content-Type' : 'application/json'
           },
         }).then(function(data) {
-          console.log(data.records[0].attributes.url);
+          var res = data.records[0].attributes.url;
+	  var res_array = res.split('/');
+          console.log(res_array[6]);
           console.log(data);
         })
  
