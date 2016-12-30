@@ -425,7 +425,7 @@ border-bottom:1px solid black;}
         headers : {
           'Authorization' : 'Bearer '+accessToken,
           'Content-Type' : 'application/json'
-	      },
+	},
         success : function(response){
           displayAccountInfo(response);
         },
@@ -528,14 +528,14 @@ border-bottom:1px solid black;}
             xhr.setRequestHeader('Access-Control-Allow-Headers', 'Content-Type, Content-Range, Content-Disposition, Content-Description');
           },
 
-          type: 'POST',
+          type: 'GET',
           crossOrigin: true,
           url : requestUrl,
-          //add the authorization header including the access_token
           headers : {
             'Authorization' : 'Bearer '+accessToken,
             'Content-Type' : 'application/json'
           },
+
           data : accountInfoJson,
           success : function(response){
             displayAccountInfo(response);
