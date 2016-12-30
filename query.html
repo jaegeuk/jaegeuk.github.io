@@ -497,7 +497,10 @@ border-bottom:1px solid black;}
           "ReportContent__c": content__c
         }
 
-        reportInfo["HouseChurchName__c"] = housechurch__c;
+        console.log(housechurch__c);
+        reportInfo.push('HouseChurchName__c', housechurch__c);
+
+        //reportInfo["HouseChurchName__c"] = housechurch__c;
 
 	console.log(reportInfo);
 
