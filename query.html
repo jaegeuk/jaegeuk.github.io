@@ -466,7 +466,7 @@ border-bottom:1px solid black;}
 
       if(subject__c != '')
       {
-	var query='SELECT+Name+from+HouseChurch__c+WHERE+Name=';
+        var query='SELECT+Name+from+HouseChurch__c+WHERE+Name=';
 
         $.ajax({
           beforeSend: function(xhr) {
@@ -487,7 +487,7 @@ border-bottom:1px solid black;}
           var housechurch = res.split('/');
           var requestUrl = 'https://na16.salesforce.com/services/data/v20.0/sobjects/HouseChurchReport__c/';
 
-	  console.log(housechurch__c);
+          console.log(housechurch__c);
 
           //create a javascript object with the account field values
           var reportInfo = {
@@ -524,8 +524,8 @@ border-bottom:1px solid black;}
             error: function(response){
               displayError(response);
             }
-          });
-        }else{
+          })
+        } else {
           alert('Please specify subject');
         }
       })
