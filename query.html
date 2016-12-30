@@ -492,7 +492,8 @@ border-bottom:1px solid black;}
             'Content-Type' : 'application/json'
           },
         }).then(function(data) {
-          console.log(data.records[0][Name]);
+
+          console.log(data.records[0].Name);
           //console.log(data);
         })
  
