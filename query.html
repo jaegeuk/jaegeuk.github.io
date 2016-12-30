@@ -493,24 +493,14 @@ border-bottom:1px solid black;}
         //create a javascript object with the account field values
         var reportInfo = {
           "PrayerSubject__c": subject__c,
-//	  "HouseChurchName__c": housechurch__c,
           "MeetingDate__c": date__c,
           "ReportContent__c": content__c
         }
-
-        console.log(housechurch__c);
-
         reportInfo['HouseChurchName__c'] = housechurch__c;
-
-//	var obj = JSON.parse(reportInfo);
-//	obj.push({"HouseChurchName__c": housechurch__c});
-//	reportInfo = JSON.stringify(obj);
-
-	console.log(reportInfo);
 
         //convert the object to a JSON string
         var reportInfoJson = JSON.stringify(reportInfo);
-        //send POST with ajax
+
         $.ajax({
 
           beforeSend: function(xhr) {
