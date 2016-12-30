@@ -452,7 +452,7 @@ border-bottom:1px solid black;}
           displayError(response);
         }
       }).then(function(data) {
-        $(".editing").val(JSON.stringify(data).records)
+        $(".editing").val(JSON.stringify(data.records))
         console.log(data);
         doJSON();
       })
