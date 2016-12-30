@@ -4,8 +4,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   </head>
   <h3>REST API With Javascript</h3>
-  <h4>Create Account Record</h4>
-  <label for="name">Account Name</label>
+  <h4>기도 제목</h4>
+  <label for="name">기도 제목</label>
   <input type="text" name="Name" id="name">
   <br><br>
   <button id="button">Submit</button>
@@ -37,20 +37,25 @@
 
     //Create Account Record button click
     $('#button').click(function(){
-
-      var accountName = $('#name').val();
-      if(accountName!= '')
+      var subject__c = $('#name').val();
+      var date__c = '2016-12-29';
+      var name__c = 'test';
+      var content__c = 'content';
+      if(subject__c != '')
       {
         //replace the below url with your domain name or yourInstance.salesforce.com
-        var requestUrl = 'https://na16.salesforce.com/services/data/v20.0/sobjects/Account/';
+        var requestUrl = 'https://na16.salesforce.com/services/data/v20.0/sobjects/HouseChurchReport/';
 
         //create a javascript object with the account field values
-        var accountInfo = {
-          "Name" :accountName
+        var reportInfo = {
+          "PrayerSubject__c" :subject__c,
+	  "MeetingDate__c"   :date__c,
+	  "HouseChurchName__c" :name__c,
+	  "ReportContent__c" :content__c
         }
 
         //convert the object to a JSON string
-        var accountInfoJson = JSON.stringify(accountInfo);
+        var accountInfoJson = JSON.stringify(reportInfo);
         //send POST with ajax
         $.ajax({
 
@@ -78,7 +83,7 @@
           }
         });
       }else{
-        alert('Please specify name');
+        alert('Please specify subject');
       }
     })
 
