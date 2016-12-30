@@ -484,7 +484,6 @@ border-bottom:1px solid black;}
           var res = data.records[0].attributes.url;
           var res_array = res.split('/');
           $('#housechurch').val(res_array[6]);
-          console.log(housechurch__c);
           console.log(data);
         })
 
@@ -494,14 +493,14 @@ border-bottom:1px solid black;}
         //create a javascript object with the account field values
         var reportInfo = {
           "PrayerSubject__c": subject__c,
-	  "HouseChurchName__c": housechurch__c,
+//	  "HouseChurchName__c": housechurch__c,
           "MeetingDate__c": date__c,
           "ReportContent__c": content__c
         }
 
         console.log(housechurch__c);
 
-     //   reportInfo['HouseChurchName__c'] = housechurch__c;
+        reportInfo['HouseChurchName__c'] = housechurch__c;
 
 //	var obj = JSON.parse(reportInfo);
 //	obj.push({"HouseChurchName__c": housechurch__c});
