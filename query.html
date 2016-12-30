@@ -388,6 +388,7 @@ border-bottom:1px solid black;}
   <br>
   <label for="house">목장 이름</label>
   <input type="text" name="house" id="house">
+  <input type="hidden" name="housechurch" id="housechurch">
   <br>
   <label for="date">날짜</label>
   <input type="text" name="date" id="date">
@@ -464,7 +465,6 @@ border-bottom:1px solid black;}
       if(subject__c != '')
       {
 	var query='SELECT+Name+from+HouseChurch__c+WHERE+Name=';
-        var housechurch__c='';
 
         $.ajax({
           beforeSend: function(xhr) {
@@ -483,23 +483,25 @@ border-bottom:1px solid black;}
         }).then(function(data) {
           var res = data.records[0].attributes.url;
           var res_array = res.split('/');
-          housechurch__c = res_array[6];
+          $('#housechurch').val(res_array[6]);
           console.log(housechurch__c);
           console.log(data);
         })
 
         var requestUrl = 'https://na16.salesforce.com/services/data/v20.0/sobjects/HouseChurchReport__c/';
+        var housechurch__c = $('#housechurch').val();
 
         //create a javascript object with the account field values
         var reportInfo = {
           "PrayerSubject__c": subject__c,
+	  "HouseChurchName__c": housechurch__c,
           "MeetingDate__c": date__c,
           "ReportContent__c": content__c
         }
 
         console.log(housechurch__c);
 
-        reportInfo['HouseChurchName__c'] = housechurch__c;
+     //   reportInfo['HouseChurchName__c'] = housechurch__c;
 
 //	var obj = JSON.parse(reportInfo);
 //	obj.push({"HouseChurchName__c": housechurch__c});
