@@ -498,6 +498,8 @@ border-bottom:1px solid black;}
           "ReportContent__c": content__c
         }
 
+	console.log(reportInfo);
+
         //convert the object to a JSON string
         var accountInfoJson = JSON.stringify(reportInfo);
         //send POST with ajax
