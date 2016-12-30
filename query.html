@@ -493,6 +493,8 @@ border-bottom:1px solid black;}
         var requestUrl = 'https://na16.salesforce.com/services/data/v20.0/sobjects/HouseChurchReport__c/';
         var housechurch__c = $('#housechurch').val();
 
+	console.log(housechurch__c);
+
         //create a javascript object with the account field values
         var reportInfo = {
           "PrayerSubject__c": subject__c,
