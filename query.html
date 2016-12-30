@@ -492,7 +492,13 @@ border-bottom:1px solid black;}
             'Content-Type' : 'application/json'
           },
         }).then(function(data) {
-          $('#housechurch').val(JSON.stringify(data));
+          var id = JSON.stringify(data);
+	  $.each(id.id,function(i,id) {
+	     if(id.totalSize == "1") {
+		console.log('teststset');
+               //do whatever you want with this url
+             }
+	  }
           console.log(data);
         })
  
