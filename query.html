@@ -506,14 +506,15 @@ border-bottom:1px solid black;}
       if(subject__c != '')
       {
         //replace the below url with your domain name or yourInstance.salesforce.com
-        var requestUrl = 'https://na16.salesforce.com/services/data/v20.0/sobjects/HouseChurchReport/';
+        var requestUrl = 'https://na16.salesforce.com/services/data/v20.0/sobjects/Work_Reg/'; //HouseChurchReport/';
 
         //create a javascript object with the account field values
         var reportInfo = {
-          "PrayerSubject__c" :subject__c,
-	  "MeetingDate__c"   :date__c,
-	  "HouseChurchName__c" :name__c,
-	  "ReportContent__c" :content__c
+	  "Year__c": date__c,
+      //    "PrayerSubject__c": subject__c,
+//	  "MeetingDate__c": date__c,
+//	  "HouseChurchName__c": name__c,
+//	  "ReportContent__c": content__c
         }
 
         //convert the object to a JSON string
@@ -528,7 +529,7 @@ border-bottom:1px solid black;}
             xhr.setRequestHeader('Access-Control-Allow-Headers', 'Content-Type, Content-Range, Content-Disposition, Content-Description');
           },
 
-          type: 'GET',
+          type: 'POST',
           crossOrigin: true,
           url : requestUrl,
           headers : {
