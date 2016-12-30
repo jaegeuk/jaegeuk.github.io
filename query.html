@@ -389,13 +389,10 @@ border-bottom:1px solid black;}
   <label for="house">목장 ID</label>
   <input type="text" name="house" id="house">
   <br>
-  <label for="subject">목장 결과</label>
-  <input type="text" name="housechurch" id="housechurch">
-  <br>
-  <label for="house">날짜</label>
+  <label for="date">날짜</label>
   <input type="text" name="date" id="date">
   <br>
-  <label for="house">보고내용</label>
+  <label for="report">보고내용</label>
   <input type="text" name="report" id="report">
   <br><br>
   <button id="insert">Submit</button>
@@ -466,17 +463,9 @@ border-bottom:1px solid black;}
 
       if(subject__c != '')
       {
-        var requestUrl = 'https://na16.salesforce.com/services/data/v20.0/sobjects/HouseChurchReport__c/';
+	var query='SELECT+Name+from+HouseChurch__c+WHERE+Name=';
+        var housechurch__c;
 
-        //create a javascript object with the account field values
-        var reportInfo = {
-          "PrayerSubject__c": subject__c,
-          "MeetingDate__c": date__c,
-          "HouseChurchName__c": house__c,
-          "ReportContent__c": content__c
-        }
-
-	var query2='SELECT+Name+from+HouseChurch__c+WHERE+Name=';
         $.ajax({
           beforeSend: function(xhr) {
             // Set the OAuth header from the session ID
@@ -486,18 +475,29 @@ border-bottom:1px solid black;}
           },
           type: 'GET',
           crossOrigin: true,
-          url : root + query2 + "'" + house__c + "'",
+          url : root + query + "'" + house__c + "'",
           headers : {
             'Authorization' : 'Bearer '+accessToken,
             'Content-Type' : 'application/json'
           },
         }).then(function(data) {
           var res = data.records[0].attributes.url;
-	  var res_array = res.split('/');
-          console.log(res_array[6]);
+          var res_array = res.split('/');
+          housechurch__c = res_array[6];
+          console.log(housechurch__c);
           console.log(data);
         })
- 
+
+        var requestUrl = 'https://na16.salesforce.com/services/data/v20.0/sobjects/HouseChurchReport__c/';
+
+        //create a javascript object with the account field values
+        var reportInfo = {
+          "PrayerSubject__c": subject__c,
+          "MeetingDate__c": date__c,
+          "HouseChurchName__c": housechurch__c,
+          "ReportContent__c": content__c
+        }
+
         //convert the object to a JSON string
         var accountInfoJson = JSON.stringify(reportInfo);
         //send POST with ajax
