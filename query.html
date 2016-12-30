@@ -389,6 +389,9 @@ border-bottom:1px solid black;}
   <label for="house">목장 ID</label>
   <input type="text" name="house" id="house">
   <br>
+  <label for="subject">목장 결과</label>
+  <input type="text" name="housechurch" id="housechurch">
+  <br>
   <label for="house">날짜</label>
   <input type="text" name="date" id="date">
   <br>
@@ -460,6 +463,7 @@ border-bottom:1px solid black;}
       var date__c = $('#date').val();
       var house__c = $('#house').val();
       var content__c = $('#report').val();
+
       if(subject__c != '')
       {
         //replace the below url with your domain name or yourInstance.salesforce.com
@@ -473,6 +477,26 @@ border-bottom:1px solid black;}
           "ReportContent__c": content__c
         }
 
+	var query='SELECT+Name+from+HouseChurch__c+WHERE+Name=';
+        $.ajax({
+          beforeSend: function(xhr) {
+            // Set the OAuth header from the session ID
+            xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+            xhr.setRequestHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+            xhr.setRequestHeader('Access-Control-Allow-Headers', 'Content-Type, Content-Range, Content-Disposition, Content-Description');
+          },
+          type: 'GET',
+          crossOrigin: true,
+          url : root + query,
+          headers : {
+            'Authorization' : 'Bearer '+accessToken,
+            'Content-Type' : 'application/json'
+          },
+        }).then(function(data) {
+          $('#housechurch').val(JSON.stringify(data));
+          console.log(data);
+        })
+ 
         //convert the object to a JSON string
         var accountInfoJson = JSON.stringify(reportInfo);
         //send POST with ajax
