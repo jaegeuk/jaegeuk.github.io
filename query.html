@@ -466,7 +466,6 @@ border-bottom:1px solid black;}
 
       if(subject__c != '')
       {
-        //replace the below url with your domain name or yourInstance.salesforce.com
         var requestUrl = 'https://na16.salesforce.com/services/data/v20.0/sobjects/HouseChurchReport__c/';
 
         //create a javascript object with the account field values
@@ -477,7 +476,7 @@ border-bottom:1px solid black;}
           "ReportContent__c": content__c
         }
 
-	var query='SELECT+Name+from+HouseChurch__c+WHERE+Name=';
+	var query2='SELECT+Name+from+HouseChurch__c+WHERE+Name=';
         $.ajax({
           beforeSend: function(xhr) {
             // Set the OAuth header from the session ID
@@ -487,7 +486,7 @@ border-bottom:1px solid black;}
           },
           type: 'GET',
           crossOrigin: true,
-          url : root + query,
+          url : root + query2 + house__c,
           headers : {
             'Authorization' : 'Bearer '+accessToken,
             'Content-Type' : 'application/json'
