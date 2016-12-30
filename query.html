@@ -384,6 +384,16 @@ border-bottom:1px solid black;}
   <div id="status"></div>
 </section>
 
+<section>
+  <label for="subject">기도 제목</label>
+  <input type="text" name="subject" id="name">
+  <label for="house">목장 ID</label>
+  <input type="text" name="house" id="house">
+  <br><br>
+  <button id="insert">Submit</button>
+  <div id="status"></div>
+</section>
+
 <script>
   var root = 'https://na16.salesforce.com/services/data/v20.0/query?q=';
 
@@ -439,68 +449,7 @@ border-bottom:1px solid black;}
       })
     })
 
-    //If account is successfully created
-    function displayAccountInfo(responseObject) {
-      var statusMessage = '<p>Success!</p>';
-      $('#status').html(statusMessage);
-      $('<a>',{//replace this with your salesforce instance url
-        text: 'https://na16.salesforce.com/'+responseObject.id,
-        href: 'https://na16.salesforce.com/'+responseObject.id,
-        target : '_blank'
-      }).appendTo($('#status'));
-    }
-
-    //If an error message occurred
-    function displayError(responseObject){
-      var responseJson = responseObject.responseJSON;
-      var statusMessage = '<p>A problem has occurred!</p>';
-      $('#status').html(statusMessage);
-      $('<p>',{
-        text : responseJson[0].errorCode+": "+responseJson[0].message
-      }).appendTo($('#status'));
-      $('<a>',{//replace this with your salesforce instance url
-        text: 'Reconnect?',
-        href: 'https://jaegeuk.github.io/connect.html',
-        target : '_blank'
-      }).appendTo($('#status'));
-    }
-  })
-
-  </script>
-
-  <label for="subject">기도 제목</label>
-  <input type="text" name="subject" id="name">
-  <label for="house">목장 ID</label>
-  <input type="text" name="house" id="house">
-  <br><br>
-  <button id="button">Submit</button>
-  <div id="status"></div>
-
-  <script type="text/javascript">
-  $(document).ready(function(){
-    //Get access token.
-    //Because the access token is a URL parameter it needs to be decoded
-    var accessToken = decodeURI(GetURLParameter('access_token'));
-    console.log(accessToken);
-
-    //Use this function to get the access token from the URL
-    function GetURLParameter(sParam)
-    {
-      var mainURL = document.location+'';
-      var pageUrls = mainURL.split('#');
-      var sURLVariables = pageUrls[1].split('&');
-      for (var i = 0; i < sURLVariables.length; i++) 
-      {
-        var sParameterName = sURLVariables[i].split('=');
-        if (sParameterName[0] == sParam) 
-        {
-          return sParameterName[1];
-        }
-      }
-    }
-
-    //Create Account Record button click
-    $('#button').click(function(){
+    $('#insert').click(function(){
       var subject__c = $('#name').val();
       var date__c = '2016-12-29';
       var house__c = $('#house').val();
@@ -550,10 +499,34 @@ border-bottom:1px solid black;}
         alert('Please specify subject');
       }
     })
+
+    //If account is successfully created
+    function displayAccountInfo(responseObject) {
+      var statusMessage = '<p>Success!</p>';
+      $('#status').html(statusMessage);
+      $('<a>',{//replace this with your salesforce instance url
+        text: 'https://na16.salesforce.com/'+responseObject.id,
+        href: 'https://na16.salesforce.com/'+responseObject.id,
+        target : '_blank'
+      }).appendTo($('#status'));
+    }
+
+    //If an error message occurred
+    function displayError(responseObject){
+      var responseJson = responseObject.responseJSON;
+      var statusMessage = '<p>A problem has occurred!</p>';
+      $('#status').html(statusMessage);
+      $('<p>',{
+        text : responseJson[0].errorCode+": "+responseJson[0].message
+      }).appendTo($('#status'));
+      $('<a>',{//replace this with your salesforce instance url
+        text: 'Reconnect?',
+        href: 'https://jaegeuk.github.io/connect.html',
+        target : '_blank'
+      }).appendTo($('#status'));
+    }
   })
 
   </script>
-
-
   </body>
 </html>
