@@ -345,6 +345,10 @@ border-bottom:1px solid black;}
     <td> SELECT+Name,ParticipatingHouseChurchGroup__r.Name,ParticipatingHouseChurchGroup__r.ParticipatingHouseChurchRegion__r.Name+from+HouseChurch__c+WHERE+Name='홍길동%20목장'<br>
     SELECT+Name+from+Household__c+WHERE+ParticipatingHouseChurch__r.Name='홍길동%20목장'+ORDER+BY+Name</td>
   </tr>
+  <tr>
+    <td> 목자 정보</td>
+    <td> SELECT+Name,Household__r.Name,Household__r.ParticipatingHouseChurch__r.Name+from+ChurchMember__c+WHERE+RoleInHouseChurch__c ='목자'</td>
+  </tr>
   </table>
   </p>
 
