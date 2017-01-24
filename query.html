@@ -398,6 +398,12 @@ border-bottom:1px solid black;}
   <br>
   <label for="report">보고내용</label>
   <input type="text" name="report" id="report">
+  <br>
+  <label for="adult">Adult</label>
+  <input type="text" name="adult" id="adult">
+  <br>
+  <label for="child">Child</label>
+  <input type="text" name="child" id="child">
   <br><br>
   <button id="insert">Submit</button>
 
@@ -467,6 +473,8 @@ border-bottom:1px solid black;}
       var date__c = $('#date').val();
       var house__c = $('#house').val();
       var content__c = $('#report').val();
+      var totaladult__c = $('#adult').val();
+      var totalchild__c = $('#child').val();
 
       if(subject__c != '') {
         var query='SELECT+Name+from+HouseChurch__c+WHERE+Name=';
@@ -497,7 +505,9 @@ border-bottom:1px solid black;}
             "PrayerSubject__c": subject__c,
             "MeetingDate__c": date__c,
             "ReportContent__c": content__c,
-            "HouseChurchName__c": housechurch__c
+            "HouseChurchName__c": housechurch__c,
+            "TotalAdultAttendees__c": totaladult__c,
+            "TotalChildAttendees__c": totalchild__c
           }
 
           //convert the object to a JSON string
