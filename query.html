@@ -404,6 +404,9 @@ border-bottom:1px solid black;}
   <br>
   <label for="child">Child</label>
   <input type="text" name="child" id="child">
+  <br>
+  <label for="child">가정</label>
+  <input type="text" name="household" id="household">
   <br><br>
   <button id="insert">Submit</button>
 
@@ -533,6 +536,7 @@ border-bottom:1px solid black;}
             data : reportInfoJson,
             success : function(response){
               displayAccountInfo(response);
+              addAttendenceInfo(response);
             },
             error: function(response){
               displayError(response);
@@ -543,6 +547,63 @@ border-bottom:1px solid black;}
         alert('Please specify subject');
       }
     })
+
+    function addAttendenceInfo(response) {
+      /* iterate every households in the list */
+      var household__c = $('#household').val();
+      var query='SELECT+Name+from+Household__c+WHERE+Name=';
+
+      $.ajax({
+        beforeSend: function(xhr) {
+          // Set the OAuth header from the session ID
+          xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+          xhr.setRequestHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+          xhr.setRequestHeader('Access-Control-Allow-Headers', 'Content-Type, Content-Range, Content-Disposition, Content-Description');
+        },
+        type: 'GET',
+        crossOrigin: true,
+        url : root + query + "'" + household__c + "'",
+        headers : {
+          'Authorization' : 'Bearer '+accessToken,
+          'Content-Type' : 'application/json'
+        },
+      }).then(function(data) {
+        var res = data.records[0].attributes.url;
+        var household_id = res.split('/')[6];
+        console.log(household_id);
+        var attendenceUrl = 'https://na16.salesforce.com/services/data/v20.0/sobjects/HouseChurchAttendence__c/';
+        var attendenceInfo = {
+          "Household__c": household_id,
+          "HouseChurchReport__c": response.id,
+        }
+        //convert the object to a JSON string
+        var AttendJson = JSON.stringify(attendenceInfo);
+
+        $.ajax({
+
+          beforeSend: function(xhr) {
+            // Set the OAuth header from the session ID
+            xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+            xhr.setRequestHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+            xhr.setRequestHeader('Access-Control-Allow-Headers', 'Content-Type, Content-Range, Content-Disposition, Content-Description');
+          },
+
+          type: 'POST',
+          crossOrigin: true,
+          url : attendenceUrl,
+          headers : {
+            'Authorization' : 'Bearer '+accessToken,
+            'Content-Type' : 'application/json'
+          },
+          data : AttendJson,
+          success : function(response){
+          },
+          error: function(response){
+            displayError(response);
+          }
+        })
+      })
+    }
 
     //If account is successfully created
     function displayAccountInfo(responseObject) {
