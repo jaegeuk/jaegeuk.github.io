@@ -388,6 +388,9 @@ border-bottom:1px solid black;}
   </div>
 
   <br><br>
+  <label for="reportid">보고서 ID</label>
+  <input type="text" name="reportid" id="reportid">
+  <br>
   <label for="subject">기도 제목</label>
   <input type="text" name="subject" id="subject">
   <br>
@@ -474,6 +477,7 @@ border-bottom:1px solid black;}
 
     $('#insert').click(function() {
       var subject__c = $('#subject').val();
+      var reportid__c = $('#reportid').val();
       var date__c = $('#date').val();
       var house__c = $('#house').val();
       var content__c = $('#report').val();
@@ -501,8 +505,17 @@ border-bottom:1px solid black;}
           var res = data.records[0].attributes.url;
           var housechurch__c = res.split('/')[6];
           var requestUrl = 'https://na16.salesforce.com/services/data/v20.0/sobjects/HouseChurchReport__c/';
+          var head_allow = 'GET, PUT, POST, DELETE, OPTIONS';
+          var head_type = 'POST';
+
+          if(reportid__c != '') {
+            requestUrl = requestUrl+reportid__c;
+            head_allow = 'HEAD, GET, PATCH, DELETE';
+            head_type = 'PATCH';
+          }
 
           console.log(housechurch__c);
+          console.log(requestUrl);
 
           //create a javascript object with the account field values
           var reportInfo = {
@@ -522,11 +535,11 @@ border-bottom:1px solid black;}
             beforeSend: function(xhr) {
               // Set the OAuth header from the session ID
               xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-              xhr.setRequestHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+              xhr.setRequestHeader('Access-Control-Allow-Methods', head_allow);
               xhr.setRequestHeader('Access-Control-Allow-Headers', 'Content-Type, Content-Range, Content-Disposition, Content-Description');
             },
 
-            type: 'POST',
+            type: head_type,
             crossOrigin: true,
             url : requestUrl,
             headers : {
@@ -536,8 +549,10 @@ border-bottom:1px solid black;}
 
             data : reportInfoJson,
             success : function(response){
-              displayAccountInfo(response);
-              addAttendenceInfo(response);
+              if(reportid__c == '') {
+                displayAccountInfo(response);
+                addAttendenceInfo(response);
+              }
             },
             error: function(response){
               displayError(response);
