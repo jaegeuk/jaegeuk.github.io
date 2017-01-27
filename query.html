@@ -344,6 +344,7 @@ border-bottom:1px solid black;}
     <td> 목장 정보</td>
     <td> SELECT+Name,ParticipatingHouseChurchGroup__r.Name,ParticipatingHouseChurchGroup__r.ParticipatingHouseChurchRegion__r.Name+from+HouseChurch__c+WHERE+Name='홍길동%20목장'<br>
     SELECT+Name+from+Household__c+WHERE+ParticipatingHouseChurch__r.Name='홍길동%20목장'+ORDER+BY+Name<br>
+    SELECT+HouseChurchName__r.Name,MeetingDate__c,TotalAdultAttendees__c,TotalChildAttendees__c+from+HouseChurchReport__c+where+WEEK_IN_YEAR(MeetingDate__c)=2+ORDER+BY+Name<br>
     SELECT+HouseChurchName__r.Name,MeetingDate__c,TotalAdultAttendees__c,TotalChildAttendees__c+from+HouseChurchReport__c+where+MeetingDate__c>2017-01-15+and+MeetingDate__c<2017-06-08+ORDER+BY+Name</td>
   </tr>
   <tr>
