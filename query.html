@@ -349,7 +349,7 @@ border-bottom:1px solid black;}
     <td> 목장 보고서/출석 정보</td>
     <td> SELECT+Name,(SELECT+MeetingDate__c+from+HouseChurches__r)+from+HouseChurch__c+order+by+Name<br>
     SELECT+HouseChurchName__r.Name,MeetingDate__c,TotalAdultAttendees__c,TotalChildAttendees__c+from+HouseChurchReport__c+where+WEEK_IN_YEAR(MeetingDate__c)=2+ORDER+BY+Name<br>
-    SELECT+HouseChurchName__r.Name,MeetingDate__c,TotalAdultAttendees__c,TotalChildAttendees__c+from+HouseChurchReport__c+where+MeetingDate__c>2017-01-15+and+MeetingDate__c<2017-06-08+ORDER+BY+Name
+    SELECT+HouseChurchName__r.Name,MeetingDate__c,TotalAdultAttendees__c,TotalChildAttendees__c+from+HouseChurchReport__c+where+MeetingDate__c>2017-01-15+and+MeetingDate__c<2017-06-08+ORDER+BY+Name <br>
     SELECT+Name,(SELECT+TotalAdultAttendees__c,TotalChildAttendees__c+from+HouseChurches__r+WHERE+WEEK_IN_YEAR(MeetingDate__c)=4)+FROM+HouseChurch__c+ORDER+BY+Name</td>
   </tr>
   <tr>
