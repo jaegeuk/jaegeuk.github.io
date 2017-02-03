@@ -580,7 +580,7 @@ border-bottom:1px solid black;}
 
           for (var i = 0; i < res.length; i++) {
             for (var j = 0; j < res[i].dataCells.length; j++)
-              delete res[i].dataCells[j]['label'];
+              delete res[i].dataCells[j]['value'];
           }
           console.log(res);
           $(".editing").val(JSON.stringify(res));
