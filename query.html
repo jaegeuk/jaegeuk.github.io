@@ -291,6 +291,11 @@ border-bottom:1px solid black;}
   <span class="rest"></span>
   <input type="input" name="" id="query" placeholder="Query here" style="width:50%">
   <button id="submit">Submit</button>
+  <br>
+  <button id="salesreportlist">리포트 리스트</button>
+  <label for="reportid">리포트ID</label>
+  <input type="text" name="reportid" id="reportid" value='00Oj0000000c2WaEAI'>
+  <button id="salesreport">리포트 요청</button>
 
   <p>
   <table style="width:80%">
@@ -478,6 +483,101 @@ border-bottom:1px solid black;}
         $(".editing").val(JSON.stringify(data.records))
         console.log(data);
         doJSON();
+      })
+    })
+
+    $("#salesreportlist").click(function() {
+      var reporturl = 'https://na16.salesforce.com/services/data/v37.0/analytics/reports';
+
+      $.ajax({
+        beforeSend: function(xhr) {
+          // Set the OAuth header from the session ID
+          xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+          xhr.setRequestHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+          xhr.setRequestHeader('Access-Control-Allow-Headers', 'Content-Type, Content-Range, Content-Disposition, Content-Description');
+        },
+        type: 'GET',
+        crossOrigin: true,
+        url : reporturl,
+        headers : {
+          'Authorization' : 'Bearer '+accessToken,
+          'Content-Type' : 'application/json'
+        },
+        success : function(response){
+          displayAccountInfo(response);
+        },
+        error: function(response){
+          displayError(response);
+        }
+      }).then(function(data) {
+        console.log(data);
+        $(".editing").val(JSON.stringify(data))
+        doJSON();
+      })
+    })
+
+    $("#salesreport").click(function() {
+      var reporturl = 'https://na16.salesforce.com/services/data/v37.0/analytics/reports/';
+      var report = reporturl + $('#reportid').val();
+
+      $.ajax({
+        beforeSend: function(xhr) {
+          // Set the OAuth header from the session ID
+          xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+          xhr.setRequestHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+          xhr.setRequestHeader('Access-Control-Allow-Headers', 'Content-Type, Content-Range, Content-Disposition, Content-Description');
+        },
+        type: 'GET',
+        crossOrigin: true,
+        url : report,
+        headers : {
+          'Authorization' : 'Bearer '+accessToken,
+          'Content-Type' : 'application/json'
+        },
+        success : function(response){
+          displayAccountInfo(response);
+        },
+        error: function(response){
+          displayError(response);
+        }
+      }).then(function(data) {
+        var reportmeta = data.reportMetadata;
+        var reportq = {
+          "reportMetadata": reportmeta
+	}
+
+        //convert the object to a JSON string
+        var reportInfoJson = JSON.stringify(reportq);
+        var reporturl = 'https://na16.salesforce.com/services/data/v37.0/analytics/reports/query';
+
+        console.log(reportInfoJson);
+
+        $.ajax({
+          beforeSend: function(xhr) {
+            // Set the OAuth header from the session ID
+            xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+            xhr.setRequestHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+            xhr.setRequestHeader('Access-Control-Allow-Headers', 'Content-Type, Content-Range, Content-Disposition, Content-Description');
+          },
+          type: 'POST',
+          crossOrigin: true,
+          url : reporturl,
+            headers : {
+            'Authorization' : 'Bearer '+accessToken,
+            'Content-Type' : 'application/json'
+          },
+          data: reportInfoJson,
+          success : function(response){
+            displayAccountInfo(response);
+          },
+          error: function(response){
+            displayError(response);
+          }
+        }).then(function(data) {
+          console.log(data);
+          $(".editing").val(JSON.stringify(data['factMap']['T!T']['rows']))
+          doJSON();
+        })
       })
     })
 
