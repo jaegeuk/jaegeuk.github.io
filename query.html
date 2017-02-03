@@ -579,7 +579,7 @@ border-bottom:1px solid black;}
           console.log(res);
 
           for (var i = 0; i < res.length; i++) {
-            for (var j = 0; j < res.dataCells.length; j++)
+            for (var j = 0; j < res[i].dataCells.length; j++)
               delete res[i].dataCells[j]['label'];
           }
           console.log(res);
