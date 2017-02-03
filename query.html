@@ -576,11 +576,13 @@ border-bottom:1px solid black;}
         }).then(function(data) {
           var res = data['factMap']['T!T']['rows'];
           console.log(data);
+          console.log(res);
 
           for (var i = 0; i < res.length; i++) {
             for (var j = 0; j < res.dataCells.length; j++)
               delete res[i].dataCells[j]['label'];
           }
+          console.log(res);
           $(".editing").val(JSON.stringify(res));
           doJSON();
         })
