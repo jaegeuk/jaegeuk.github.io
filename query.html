@@ -574,7 +574,13 @@ border-bottom:1px solid black;}
             displayError(response);
           }
         }).then(function(data) {
+          var res = data['factMap']['T!T']['rows'];
           console.log(data);
+
+          for (var i = 0; i < res.length; i++) {
+            for (var j = 0; j < res.dataCells.length; j++)
+              delete res[i].dataCells[j]['label'];
+          }
           $(".editing").val(JSON.stringify(data['factMap']['T!T']['rows']))
           doJSON();
         })
