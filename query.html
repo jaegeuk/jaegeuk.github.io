@@ -312,6 +312,10 @@ border-bottom:1px solid black;}
     <td> SELECT+Name,CellPhone__c,Email__c+from+ChurchMember__c+WHERE+KoreanName__c='홍길동'+AND+ID__c='0xxxx'</td>
   </tr>
   <tr>
+    <td> 교인 to 목장</td>
+    <td> SELECT+ParticipatingHouseChurch__r.Name+from+Household__c+WHERE+Id+IN+(SELECT+Household__c+from+ChurchMember__c+WHERE+KoreanName__c='홍길동')</td>
+  </tr>
+  <tr>
     <td> 사역부서 리스트</td>
     <td> SELECT+Name+from+MinistryDepartment__c</td>
   </tr>
