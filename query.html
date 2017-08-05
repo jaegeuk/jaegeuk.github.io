@@ -365,6 +365,8 @@ border-bottom:1px solid black;}
   <tr>
     <td> 목자 정보</td>
     <td> SELECT+Name,Household__r.Name,Household__r.ParticipatingHouseChurch__r.Name+from+ChurchMember__c+WHERE+RoleInHouseChurch__c ='목자'</td>
+    <td> SELECT+Household__r.ParticipatingHouseChurch__r.Name+from+ChurchMember__c+WHERE+KepcUsername__c='xxx'+AND+RoleInHouseChurch__c='목자'</td>
+    <td> SELECT+Household__r.ParticipatingHouseChurch__r.ParticipatingHouseChurchGroup__r.Name+from+ChurchMember__c+WHERE+KepcUsername__c='xxx'+AND+RoleInHouseChurch__c='목자'+AND+Household__r.ParticipatingHouseChurch__r.IsHouseChurchGroupLeadersHouseChurch__c=TRUE</td>
   </tr>
   </table>
   </p>
